@@ -7,6 +7,13 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Mine Rescue</title>
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Mine Rescue – Heli-Rucksack-Rettungsspiel im Retro-Stil" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <style>
       /* Seite komplett schwarz, Spielfläche zentriert */
       html,
@@ -21,14 +28,67 @@
         align-items: center;
         justify-content: center;
       }
+      /* Touch-Gerät im Hochformat: Spiel oben, darunter die Buttons */
+      body.touch-portrait {
+        align-items: flex-start;
+      }
+
       /* Interne Auflösung 160x192; die tatsächliche CSS-Größe setzt renderer.ts
-         als ganzzahliges Vielfaches. pixelated = harte Pixelkanten. */
+         (ganzzahliges Vielfaches, auf Touch-Geräten feiner). pixelated = harte Pixelkanten. */
       #screen {
         image-rendering: pixelated;
         image-rendering: crisp-edges;
         background: #000;
         touch-action: none;
       }
+
+      /* ---- Touch-Bedienfeld (nur sichtbar mit body.touch, siehe src/ui/touch.ts) ---- */
+      #touch {
+        display: none;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 170px;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        touch-action: none;
+      }
+      body.touch #touch {
+        display: block;
+      }
+      .tbtn {
+        position: absolute;
+        pointer-events: auto;
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.18);
+        border: 2px solid rgba(255, 255, 255, 0.45);
+        color: #fff;
+        font: bold 18px sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        touch-action: none;
+      }
+      .tbtn.on {
+        background: rgba(255, 255, 255, 0.5);
+      }
+      /* Steuerkreuz links */
+      #t-up { left: 64px; bottom: 100px; }
+      #t-left { left: 6px; bottom: 54px; }
+      #t-right { left: 122px; bottom: 54px; }
+      #t-down { left: 64px; bottom: 8px; }
+      /* Aktionsknöpfe rechts */
+      #t-laser { right: 8px; bottom: 44px; width: 78px; height: 78px; border-radius: 50%; font-size: 14px; }
+      #t-dyn { right: 96px; bottom: 8px; width: 64px; height: 64px; border-radius: 50%; font-size: 13px; }
+      /* Pause/Mute oben rechts */
+      #t-pause, #t-mute { position: fixed; top: 8px; bottom: auto; width: 40px; height: 40px; font-size: 16px; }
+      #t-pause { right: 8px; }
+      #t-mute { right: 56px; }
     </style>
   </head>
   <body>

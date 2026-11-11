@@ -21,6 +21,7 @@ import {
   DYNAMITE_BONUS_EACH,
   ENERGY_BONUS_PER_UNIT,
   ENERGY_LASER_COST,
+  EXPLOSION_FRAMES,
   EXTRA_LIFE_EVERY,
   HIGHSCORE_KEY,
   LIVES_START,
@@ -31,6 +32,7 @@ import {
   SCREEN_MIN_FRAMES,
   SCREEN_W,
 } from './config';
+import { AudioEngine } from './audio';
 import { Dynamite } from './entities/dynamite';
 import { createEnemy, type Enemy } from './entities/enemies';
 import { Laser, rectsOverlap, type Rect } from './entities/laser';
@@ -46,12 +48,14 @@ import {
   drawVictory,
   type LevelResult,
 } from './ui/screens';
+import { setupTouch } from './ui/touch';
 
 /** Zustände des Spielablaufs. */
 type GameState = 'title' | 'playing' | 'dying' | 'levelDone' | 'gameOver' | 'victory';
 
 export class Game {
   private input = new Input();
+  private audio = new AudioEngine();
   private renderer: Renderer;
   private level: Level;
   private player = new Player();
@@ -80,6 +84,9 @@ export class Game {
 
   constructor(canvas: HTMLCanvasElement) {
     this.renderer = new Renderer(canvas);
+    // Ton darf erst nach einer Benutzeraktion starten; Touch-Buttons nur auf Touch-Geräten.
+    this.input.onUserGesture = () => this.audio.unlock();
+    setupTouch(this.input, canvas);
     // Level 1 schon laden, damit render() im Titel nichts Ungültiges anfasst.
     this.level = new Level(LEVEL_DEFS[0]);
   }
@@ -95,6 +102,7 @@ export class Game {
     this.levelIndex = 0;
     this.nextExtraLife = EXTRA_LIFE_EVERY;
     this.newRecord = false;
+    this.audio.play('start');
     this.loadLevel(0);
   }
 
@@ -122,6 +130,7 @@ export class Game {
     while (this.score >= this.nextExtraLife) {
       this.lives++;
       this.nextExtraLife += EXTRA_LIFE_EVERY;
+      this.audio.play('extra');
     }
   }
 
@@ -132,12 +141,14 @@ export class Game {
       this.newRecord = true;
       saveHighScore(this.highScore);
     }
+    this.audio.play(next);
     this.setState(next);
   }
 
   /** Figur stirbt: kurze Todesphase, danach Leben abziehen. */
   private killPlayer(): void {
     if (this.state !== 'playing') return;
+    this.audio.play('death');
     this.setState('dying');
   }
 
@@ -154,6 +165,7 @@ export class Game {
       total,
     };
     this.addScore(total);
+    this.audio.play('rescue');
     this.setState('levelDone');
   }
 
@@ -180,8 +192,9 @@ export class Game {
   update(): void {
     this.tick++;
     this.stateTimer++;
+    this.input.poll();
     const pressedStart = this.input.wasPressed('start');
-    // 'mute' wird mit dem Sound in Meilenstein 6 verwendet.
+    if (this.input.wasPressed('mute')) this.audio.toggleMute();
 
     switch (this.state) {
       case 'title':
@@ -208,6 +221,8 @@ export class Game {
         if (pressedStart && this.stateTimer >= SCREEN_MIN_FRAMES) this.setState('title');
         break;
     }
+    // Rucksack-Brummen nur, wenn wirklich geflogen wird
+    this.audio.setThrust(this.state === 'playing' && !this.paused && this.player.thrusting);
     this.input.endFrame();
   }
 
@@ -233,6 +248,7 @@ export class Game {
     // Laser: Dauerfeuer bei gehaltener Taste, kostet Energie
     if (this.input.isDown('laser') && this.laser.ready && p.energy > 0) {
       this.laser.fire();
+      this.audio.play('laser');
       p.energy = Math.max(0, p.energy - ENERGY_LASER_COST);
     }
     this.laser.update(p, this.level);
@@ -241,9 +257,12 @@ export class Game {
     if (this.input.wasPressed('dynamit') && p.dynamite > 0 && !this.dynamite && p.onGround) {
       p.dynamite--;
       this.dynamite = new Dynamite(p.centerX, p.y + PLAYER_H - 3);
+      this.audio.play('place');
     }
     if (this.dynamite) {
       this.dynamite.update(this.level);
+      if (this.dynamite.fuse > 0 && this.dynamite.fuse % 15 === 0) this.audio.play('tick');
+      if (this.dynamite.boom === EXPLOSION_FRAMES) this.audio.play('explosion');
       if (this.dynamite.hits(p.box)) this.killPlayer();
       if (this.dynamite?.finished) this.dynamite = null;
     }
@@ -265,6 +284,7 @@ export class Game {
   /** Gegner getötet: Punkte gutschreiben. */
   private killEnemy(e: Enemy): void {
     e.alive = false;
+    this.audio.play('kill');
     this.addScore(POINTS_ENEMY);
   }
 
@@ -274,6 +294,12 @@ export class Game {
 
   /** Zeichnet den aktuellen Zustand. */
   render(): void {
+    this.renderState();
+    if (this.audio.muted) this.renderer.drawMuteIndicator();
+  }
+
+  /** Zeichnet je nach Zustand die passende Ansicht. */
+  private renderState(): void {
     const r = this.renderer;
     switch (this.state) {
       case 'title':

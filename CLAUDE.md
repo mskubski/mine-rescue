@@ -11,7 +11,9 @@ Besitzer: GitHub `mskubski`. Vor dem ersten Push nach dem Repo-Namen fragen.
 - Interne Auflösung 160x192, CSS ganzzahlig skaliert, `image-rendering: pixelated`
 - Fester 60-Hz-Zeitschritt; Logik in `update()`, Zeichnen in `render()`
 - Alle Grafiken als Code-Sprites (`src/sprites.ts`), keine externen Assets/Original-Grafiken
-- Sound später per WebAudio (Rechteck/Rauschen)
+- Sound per WebAudio (`src/audio.ts`, Rechteck/Rauschen, AudioContext erst nach Benutzeraktion); Touch (`src/ui/touch.ts`) und Gamepad speisen `Input`
+- PWA: `public/manifest.webmanifest`, `public/sw.js` (bei Änderungen `CACHE_VERSION` erhöhen), Icons via `scripts/make-icons.mjs`; SW wird nur im Prod-Build registriert
+- Hinweis zum Testen von Touch/SW: `preview`-Server (Port 4173) in `.claude/launch.json`
 - **Kommentare auf Deutsch**: Datei-Kopf mit Zweck, Abschnittsüberschriften, Kommentar an jeder Funktion/Klasse und nicht offensichtlichen Stellen
 - **Tuning-Konstanten nur in `src/config.ts`** (mit Kommentar), keine Magic Numbers im Code
 - Level als ASCII-Daten in `src/levels/` (Format: `docs/LEVEL_FORMAT.md`)

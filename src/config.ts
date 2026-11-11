@@ -129,6 +129,19 @@ export const SCREEN_MIN_FRAMES = 90;
 export const HIGHSCORE_KEY = 'mine-rescue-highscore';
 
 // ---------------------------------------------------------------------------
+// Sound, Touch, Gamepad
+// ---------------------------------------------------------------------------
+
+/** Gesamtlautstärke (0..1). */
+export const AUDIO_VOLUME = 0.25;
+/** Browser-Speicherschlüssel für die Stumm-Einstellung. */
+export const MUTE_KEY = 'mine-rescue-muted';
+/** Höhe des Touch-Bedienfelds (CSS-Pixel), das im Hochformat unter dem Spiel freigehalten wird. */
+export const TOUCH_PANEL_H = 170;
+/** Stick-Totzone des Gamepads (0..1). */
+export const GAMEPAD_DEADZONE = 0.4;
+
+// ---------------------------------------------------------------------------
 // Gefahren: Wasser
 // ---------------------------------------------------------------------------
 

@@ -30,3 +30,12 @@ function frame(now: number): void {
 }
 
 requestAnimationFrame(frame);
+
+// PWA: Service Worker nur im Produktions-Build registrieren (macht das Spiel offlinefähig).
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {
+      /* Offline-Funktion ist optional – Fehler ignorieren */
+    });
+  });
+}

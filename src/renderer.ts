@@ -25,6 +25,7 @@ import {
   SCREEN_H,
   SCREEN_W,
   TILE,
+  TOUCH_PANEL_H,
 } from './config';
 import type { Dynamite } from './entities/dynamite';
 import { Spider, type Enemy } from './entities/enemies';
@@ -87,7 +88,14 @@ export class Renderer {
 
   /** Setzt die CSS-Größe auf das größte ganzzahlige Vielfache, das ins Fenster passt (mind. 1). */
   resize(): void {
-    const scale = Math.max(1, Math.floor(Math.min(window.innerWidth / SCREEN_W, window.innerHeight / SCREEN_H)));
+    const touch = document.body.classList.contains('touch');
+    const portrait = window.innerHeight > window.innerWidth;
+    document.body.classList.toggle('touch-portrait', touch && portrait);
+    // Im Hochformat auf Touch-Geräten bleibt unten Platz für die Buttons.
+    const availH = window.innerHeight - (touch && portrait ? TOUCH_PANEL_H : 0);
+    const raw = Math.min(window.innerWidth / SCREEN_W, availH / SCREEN_H);
+    // Normal ganzzahlig (scharfe Pixel); auf kleinen Touch-Displays in 0,25er-Schritten, damit nichts verschenkt wird.
+    const scale = touch ? Math.max(1, Math.floor(raw * 4) / 4) : Math.max(1, Math.floor(raw));
     this.canvas.style.width = `${SCREEN_W * scale}px`;
     this.canvas.style.height = `${SCREEN_H * scale}px`;
   }
@@ -235,6 +243,11 @@ export class Renderer {
   drawDebug(roomX: number, roomY: number, player: Player): void {
     drawText(this.ctx, `R ${roomX},${roomY}`, 2, 2, COLORS.debug);
     drawText(this.ctx, `X ${Math.round(player.x)} Y ${Math.round(player.y)}`, 2, 9, COLORS.debug);
+  }
+
+  /** Kleine "MUTE"-Anzeige oben rechts, wenn der Ton aus ist. */
+  drawMuteIndicator(): void {
+    drawText(this.ctx, 'MUTE', SCREEN_W - 19, 2, COLORS.energyLow);
   }
 
   /** Pause-Anzeige in der Mitte des Spielbereichs. */

@@ -4,6 +4,15 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unveröffentlicht]
 
+## [0.6.0] – Meilenstein 6
+### Hinzugefügt
+- Sound per WebAudio (Laser, Dynamit, Explosion, Treffer, Tod, Jingles, Rucksack-Brummen), Mute mit Taste M (gespeichert) und „MUTE“-Anzeige
+- Touch-Buttons (nur auf Touch-Geräten), Tippen aufs Spielfeld = Start/Weiter, Hochformat-Layout mit freigehaltenem Bedienfeld
+- Gamepad-Unterstützung (Gamepad API)
+- PWA: Manifest, Icons (per `scripts/make-icons.mjs` erzeugt), Service Worker mit Offline-Cache
+### Geändert
+- Auf Touch-Geräten Skalierung in 0,25er-Schritten statt strikt ganzzahlig
+
 ## [0.5.0] – Meilenstein 5
 ### Hinzugefügt
 - Rettung des Bergmanns beendet das Level; Bonus für Restenergie und Restdynamit
