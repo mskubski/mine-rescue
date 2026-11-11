@@ -17,7 +17,7 @@ Besitzer: GitHub `mskubski`. Vor dem ersten Push nach dem Repo-Namen fragen.
 - Level als ASCII-Daten in `src/levels/` (Format: `docs/LEVEL_FORMAT.md`)
 
 ## Entscheidungen
-- Screen-Flip wie Original: Kamera zeigt den Raum (20x24 Kacheln), in dem die Figurenmitte liegt; Welt ist ein globales Tile-Raster
+- Screen-Flip wie Original: Kamera zeigt den Raum (20x22 Kacheln = 160x176 px, darunter 16 px HUD), in dem die Figurenmitte liegt; Welt ist ein globales Tile-Raster
 - Kachelgröße 8x8; Kollisionsbox Figur 6x14, Sprite 8x16
 
 ## Arbeitsweise

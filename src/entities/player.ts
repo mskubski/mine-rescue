@@ -10,6 +10,9 @@
 
 import {
   AIR_SPEED,
+  DYNAMITE_START,
+  ENERGY_FLY_COST,
+  ENERGY_MAX,
   DIVE_ACCEL,
   GRAVITY,
   MAX_FALL_SPEED,
@@ -22,6 +25,7 @@ import {
 } from '../config';
 import type { Input } from '../input';
 import type { Level } from '../levels';
+import type { Rect } from './laser';
 
 export class Player {
   x = 0;
@@ -32,6 +36,10 @@ export class Player {
   facing: 1 | -1 = 1;
   /** Steht die Figur auf festem Boden? */
   onGround = false;
+  /** Restenergie (0..ENERGY_MAX). Bei 0 versagt der Rucksack. */
+  energy = ENERGY_MAX;
+  /** Verbleibende Dynamit-Stäbe. */
+  dynamite = DYNAMITE_START;
   /** Schiebt der Rucksack gerade (für Animation/Sound später)? */
   thrusting = false;
 
@@ -42,6 +50,11 @@ export class Player {
     this.vx = 0;
     this.vy = 0;
     this.onGround = false;
+  }
+
+  /** Kollisionsbox als Rechteck (für Treffer-Tests). */
+  get box(): Rect {
+    return { x: this.x, y: this.y, w: PLAYER_W, h: PLAYER_H };
   }
 
   /** Mitte der Kollisionsbox (für Raumbestimmung). */
@@ -71,8 +84,10 @@ export class Player {
     }
 
     // --- Vertikal: Rucksack-Schub oder Schwerkraft ---
-    this.thrusting = up;
-    if (up) {
+    // Ohne Energie versagt der Rucksack: nur noch Fallen.
+    this.thrusting = up && this.energy > 0;
+    if (this.thrusting) {
+      this.energy = Math.max(0, this.energy - ENERGY_FLY_COST);
       this.vy = Math.max(this.vy - THRUST, -MAX_RISE_SPEED);
     } else {
       this.vy = Math.min(this.vy + GRAVITY + (down ? DIVE_ACCEL : 0), MAX_FALL_SPEED);

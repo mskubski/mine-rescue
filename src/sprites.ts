@@ -148,3 +148,19 @@ export const WATER_DEF: SpriteDef = {
     'aaaabbaa',
   ],
 };
+
+// ---------------------------------------------------------------------------
+// Dynamit-Stab (4x6, Zündfunke wird vom Renderer darübergezeichnet)
+// ---------------------------------------------------------------------------
+
+export const DYNAMITE_DEF: SpriteDef = {
+  palette: { K: '#6b3a12', R: '#e02020', W: '#ffffff' },
+  rows: [
+    '..K.',
+    '..K.',
+    'RRRR',
+    'RWWR',
+    'RRRR',
+    'RRRR',
+  ],
+};

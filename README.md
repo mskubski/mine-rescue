@@ -3,7 +3,7 @@
 Eigenständiger Browser-Nachbau im Stil klassischer Heli-Rucksack-Spiele (inspiriert von H.E.R.O. auf dem Atari 2600).
 Alle Grafiken entstehen per Code, es werden keine Original-ROMs oder -Grafiken verwendet.
 
-**Stand:** Meilenstein 2 von 7 (Figur fliegt/läuft, Tile-Map-Level, Kollisionen, Screen-Flip).
+**Stand:** Meilenstein 3 von 7 (Energie, Laser, Dynamit, Lehmwände sprengen).
 Siehe [CHANGELOG.md](CHANGELOG.md).
 
 ## Start
@@ -23,8 +23,8 @@ npm run preview    # Build lokal ansehen
 |---------------------|----------------------------|
 | Bewegen             | Pfeile oder WASD           |
 | Steigen/Schweben    | Hoch / W (Rucksack)        |
-| Laser (ab M3)       | Leertaste                  |
-| Dynamit (ab M3)     | Strg oder E                |
+| Laser               | Leertaste (gehalten = Dauerfeuer) |
+| Dynamit legen       | Strg oder E (nur am Boden) |
 | Pause               | P                          |
 | Mute (ab M6)        | M                          |
 | Debug-Anzeige       | F3 (Raum und Position)     |
@@ -41,15 +41,15 @@ src/
   input.ts       Tastatur -> Aktionen (Tastenbelegung dort ändern)
   renderer.ts    Canvas, ganzzahlige Skalierung, Zeichnen
   sprites.ts     Pixel-Sprites als Text-Arrays + Paletten
-  entities/      Spielfigur (später Gegner, Dynamit, Laser)
+  entities/      player, laser, dynamite (später Gegner)
   levels/        tiles.ts (Kachel-Typen), index.ts (Parser), level1.ts (Karte)
-  ui/            Pixelfont (später HUD, Titel, Game Over)
+  ui/            Pixelfont (später Titel, Game Over)
 docs/LEVEL_FORMAT.md   Anleitung zum Editieren von Leveln
 ```
 
 ## Wo ändere ich was?
 
-- **Spielgefühl** (Lauftempo, Schwerkraft, Schub …): `src/config.ts`
+- **Spielgefühl** (Lauftempo, Schwerkraft, Schub, Energieverbrauch, Laser, Dynamit-Zündschnur/Radius): `src/config.ts`
 - **Level bauen/ändern**: `src/levels/level1.ts`, Format in `docs/LEVEL_FORMAT.md`; neue Level in `LEVEL_DEFS` (`src/levels/index.ts`) eintragen
 - **Grafiken**: `src/sprites.ts`
 - **Tastenbelegung**: `BINDINGS` in `src/input.ts`

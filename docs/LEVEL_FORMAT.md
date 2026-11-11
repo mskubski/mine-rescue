@@ -3,9 +3,9 @@
 Ein Level ist ein `LevelDef` (`name` + `map`) in `src/levels/levelN.ts`. `map` ist ein Array von Textzeilen.
 
 ## Größe
-- Die Welt besteht aus **Räumen zu 20x24 Kacheln** (Kachel = 8x8 Pixel, Raum = 160x192 Pixel).
-- Breite jeder Zeile = Vielfaches von **20**, Zeilenzahl = Vielfaches von **24**.
-- Level 1: 3x2 Räume = 60 Zeichen x 48 Zeilen.
+- Die Welt besteht aus **Räumen zu 20x22 Kacheln** (Kachel = 8x8 Pixel, Raum = 160x176 Pixel; darunter liegt der 16 px hohe HUD-Streifen).
+- Breite jeder Zeile = Vielfaches von **20**, Zeilenzahl = Vielfaches von **22**.
+- Level 1: 3x2 Räume = 60 Zeichen x 44 Zeilen.
 - Die Kamera springt beim Verlassen eines Raumes zum Nachbarraum (Screen-Flip). Der Rand der Karte zählt als Fels.
 
 ## Zeichen
@@ -13,7 +13,7 @@ Ein Level ist ein `LevelDef` (`name` + `map`) in `src/levels/levelN.ts`. `map` i
 |---------|---------------------------------------------|
 | `.`     | leer (Höhle)                                |
 | `#`     | Fels (fest, nicht sprengbar)                |
-| `L`     | Lehm (fest, mit Dynamit sprengbar, ab M3)   |
+| `L`     | Lehm (fest, mit Dynamit sprengbar; Sprengradius `EXPLOSION_RADIUS_TILES` in config.ts)   |
 | `~`     | Lava (tödlich, ab M4)                       |
 | `W`     | Wasser (ab M4)                              |
 | `P`     | Startpunkt – genau einmal pro Level         |

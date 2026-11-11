@@ -3,23 +3,58 @@
  *
  * Besitzt den Canvas (interne Auflösung 160x192) und kümmert sich um:
  *   - ganzzahlige Hochskalierung per CSS (scharfe Pixel, zentriert, responsiv)
- *   - Zeichnen von Sprites und Kacheln
+ *   - Zeichnen von Kacheln, Sprites, Laser, Explosion und HUD
  * Spiellogik gehört nicht hierher.
+ *
+ * Ablauf pro Frame (siehe Game.render): beginFrame -> Objekte -> drawHud.
  */
 
-import { COLORS, PLAYER_SPRITE_H, PLAYER_SPRITE_W, ROOM_TILES_H, ROOM_TILES_W, SCREEN_H, SCREEN_W, TILE, PLAYER_H, PLAYER_W } from './config';
+import {
+  COLORS,
+  ENERGY_LOW_FRACTION,
+  ENERGY_MAX,
+  HUD_H,
+  PLAYER_H,
+  PLAYER_SPRITE_H,
+  PLAYER_SPRITE_W,
+  PLAYER_W,
+  ROOM_PX_H,
+  ROOM_TILES_H,
+  ROOM_TILES_W,
+  SCREEN_H,
+  SCREEN_W,
+  TILE,
+} from './config';
+import type { Dynamite } from './entities/dynamite';
+import type { Laser } from './entities/laser';
+import type { Player } from './entities/player';
 import type { Level } from './levels';
 import { Tile } from './levels/tiles';
-import type { Player } from './entities/player';
-import { CLAY_DEF, LAVA_DEF, PLAYER_DEF, ROCK_DEF, WATER_DEF, makeSprite, type Sprite } from './sprites';
+import {
+  CLAY_DEF,
+  DYNAMITE_DEF,
+  LAVA_DEF,
+  PLAYER_DEF,
+  ROCK_DEF,
+  WATER_DEF,
+  makeSprite,
+  type Sprite,
+} from './sprites';
 import { drawText } from './ui/font';
 
 export class Renderer {
   readonly canvas: HTMLCanvasElement;
   readonly ctx: CanvasRenderingContext2D;
 
+  /** Kamera-Ursprung (Welt-Pixel des aktuellen Raums), von beginFrame gesetzt. */
+  private camX = 0;
+  private camY = 0;
+  /** Frame-Zähler für Blinken/Flackern. */
+  private tick = 0;
+
   // Vorgerenderte Sprites
   private playerSprite = makeSprite(PLAYER_DEF);
+  private dynamiteSprite = makeSprite(DYNAMITE_DEF);
   private tileSprites: Record<number, Sprite> = {
     [Tile.Fels]: makeSprite(ROCK_DEF),
     [Tile.Lehm]: makeSprite(CLAY_DEF),
@@ -45,22 +80,19 @@ export class Renderer {
   }
 
   /**
-   * Zeichnet einen kompletten Frame.
-   * @param level   aktuelles Level
-   * @param player  Spielfigur
-   * @param roomX   Raum-Spalte der Kamera (Screen-Flip)
-   * @param roomY   Raum-Zeile der Kamera
+   * Beginnt einen Frame: löscht, setzt die Kamera auf den Raum und zeichnet dessen Kacheln.
+   * @param roomX Raum-Spalte (Screen-Flip)
+   * @param roomY Raum-Zeile
    */
-  drawFrame(level: Level, player: Player, roomX: number, roomY: number): void {
+  beginFrame(level: Level, roomX: number, roomY: number): void {
     const ctx = this.ctx;
+    this.tick++;
     ctx.fillStyle = COLORS.background;
     ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
 
-    // Kamera = Ursprung des aktuellen Raums in Welt-Pixeln
-    const camX = roomX * SCREEN_W;
-    const camY = roomY * SCREEN_H;
+    this.camX = roomX * SCREEN_W;
+    this.camY = roomY * ROOM_PX_H;
 
-    // Kacheln des aktuellen Raums
     const c0 = roomX * ROOM_TILES_W;
     const r0 = roomY * ROOM_TILES_H;
     for (let r = 0; r < ROOM_TILES_H; r++) {
@@ -70,11 +102,72 @@ export class Renderer {
         ctx.drawImage(this.tileSprites[t].normal, c * TILE, r * TILE);
       }
     }
+  }
 
-    // Spielfigur: Sprite ist größer als die Kollisionsbox und wird um sie zentriert/unten bündig
-    const sx = Math.round(player.x - camX - (PLAYER_SPRITE_W - PLAYER_W) / 2);
-    const sy = Math.round(player.y - camY - (PLAYER_SPRITE_H - PLAYER_H));
-    ctx.drawImage(player.facing === 1 ? this.playerSprite.normal : this.playerSprite.flipped, sx, sy);
+  /** Spielfigur: Sprite ist größer als die Kollisionsbox, unten bündig und mittig. */
+  drawPlayer(player: Player): void {
+    const sx = Math.round(player.x - this.camX - (PLAYER_SPRITE_W - PLAYER_W) / 2);
+    const sy = Math.round(player.y - this.camY - (PLAYER_SPRITE_H - PLAYER_H));
+    this.ctx.drawImage(player.facing === 1 ? this.playerSprite.normal : this.playerSprite.flipped, sx, sy);
+  }
+
+  /** Laser-Strahl (flackert zwischen zwei Farben). */
+  drawLaser(laser: Laser): void {
+    if (!laser.active) return;
+    const b = laser.rect();
+    if (b.w <= 0) return;
+    this.ctx.fillStyle = this.tick % 2 === 0 ? COLORS.laser : COLORS.laserLight;
+    this.ctx.fillRect(Math.round(b.x - this.camX), Math.round(b.y - this.camY), b.w, b.h);
+  }
+
+  /** Dynamit: Stab mit blinkendem Zündfunken; während der Explosion der Feuerball. */
+  drawDynamite(d: Dynamite): void {
+    const ctx = this.ctx;
+    if (d.exploding) {
+      // Flackernde Kacheln im Sprengradius (zufällig wirkend, aber deterministisch)
+      const colors = [COLORS.boom1, COLORS.boom2, COLORS.boom3];
+      for (const [c, r] of d.blastTiles()) {
+        const x = c * TILE - this.camX;
+        const y = r * TILE - this.camY;
+        if (x < 0 || y < 0 || x >= SCREEN_W || y >= ROOM_PX_H) continue;
+        ctx.fillStyle = colors[(c * 7 + r * 3 + this.tick) % 3];
+        ctx.fillRect(x, y, TILE, TILE);
+      }
+      return;
+    }
+    const sx = Math.round(d.cx - this.camX - 2);
+    const sy = Math.round(d.cy - this.camY - 3);
+    ctx.drawImage(this.dynamiteSprite.normal, sx, sy);
+    // Zündfunke: blinkt, gelb/weiß
+    ctx.fillStyle = Math.floor(d.age / 3) % 2 === 0 ? COLORS.boom1 : COLORS.boom3;
+    ctx.fillRect(sx + 2, sy - 1, 1, 1);
+  }
+
+  /** HUD-Streifen am unteren Rand: Energie-Balken und Dynamit-Vorrat. */
+  drawHud(player: Player): void {
+    const ctx = this.ctx;
+    const y0 = ROOM_PX_H;
+    ctx.fillStyle = COLORS.hudBg;
+    ctx.fillRect(0, y0, SCREEN_W, HUD_H);
+    ctx.fillStyle = COLORS.hudLine;
+    ctx.fillRect(0, y0, SCREEN_W, 1);
+
+    // Energie-Balken (Rahmen + Füllung), blinkt rot bei niedriger Energie
+    const frac = player.energy / ENERGY_MAX;
+    const bx = 4;
+    const by = y0 + 5;
+    const bw = 100;
+    ctx.fillStyle = COLORS.hudLine;
+    ctx.fillRect(bx - 1, by - 1, bw + 2, 8);
+    ctx.fillStyle = COLORS.hudBg;
+    ctx.fillRect(bx, by, bw, 6);
+    const low = frac < ENERGY_LOW_FRACTION;
+    ctx.fillStyle = low && Math.floor(this.tick / 8) % 2 === 0 ? COLORS.energyLow : COLORS.energy;
+    ctx.fillRect(bx, by, Math.round(bw * frac), 6);
+
+    // Dynamit-Symbol + Anzahl
+    ctx.drawImage(this.dynamiteSprite.normal, 112, y0 + 5);
+    drawText(ctx, `X${player.dynamite}`, 120, y0 + 5, COLORS.text);
   }
 
   /** Debug-Einblendung: Raum und Pixelposition. */
@@ -83,8 +176,8 @@ export class Renderer {
     drawText(this.ctx, `X ${Math.round(player.x)} Y ${Math.round(player.y)}`, 2, 9, COLORS.debug);
   }
 
-  /** Pause-Anzeige in der Bildschirmmitte. */
+  /** Pause-Anzeige in der Mitte des Spielbereichs. */
   drawPause(): void {
-    drawText(this.ctx, 'PAUSE', SCREEN_W / 2 - 10, SCREEN_H / 2 - 2, COLORS.text);
+    drawText(this.ctx, 'PAUSE', SCREEN_W / 2 - 10, ROOM_PX_H / 2 - 2, COLORS.text);
   }
 }

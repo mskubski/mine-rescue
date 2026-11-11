@@ -21,8 +21,12 @@ export const SCREEN_H = 192;
 export const TILE = 8;
 /** Kacheln pro Raum horizontal (SCREEN_W / TILE). */
 export const ROOM_TILES_W = SCREEN_W / TILE; // 20
-/** Kacheln pro Raum vertikal (SCREEN_H / TILE). */
-export const ROOM_TILES_H = SCREEN_H / TILE; // 24
+/** Höhe des HUD-Streifens am unteren Bildrand (Pixel): Energie, Dynamit, später Punkte. */
+export const HUD_H = 16;
+/** Höhe des Spielbereichs eines Raums in Pixeln (Bildschirm ohne HUD). */
+export const ROOM_PX_H = SCREEN_H - HUD_H; // 176
+/** Kacheln pro Raum vertikal (ROOM_PX_H / TILE). */
+export const ROOM_TILES_H = ROOM_PX_H / TILE; // 22
 
 // ---------------------------------------------------------------------------
 // Game-Loop
@@ -63,6 +67,45 @@ export const MAX_RISE_SPEED = 1.3;
 export const DIVE_ACCEL = 0.12;
 
 // ---------------------------------------------------------------------------
+// Energie (Rucksack-Power)
+// ---------------------------------------------------------------------------
+
+/** Volle Energie. */
+export const ENERGY_MAX = 100;
+/** Energieverbrauch pro Frame, solange der Rucksack schiebt (100 / 0.03 / 60 ≈ 55 s Dauerflug). */
+export const ENERGY_FLY_COST = 0.03;
+/** Energieverbrauch pro Laser-Schuss. */
+export const ENERGY_LASER_COST = 0.6;
+/** Unter diesem Anteil (0..1) blinkt die Energieanzeige rot. */
+export const ENERGY_LOW_FRACTION = 0.25;
+
+// ---------------------------------------------------------------------------
+// Laser (Helm-Strahl)
+// ---------------------------------------------------------------------------
+
+/** Maximale Reichweite des Strahls (Pixel). */
+export const LASER_LENGTH = 72;
+/** Wie viele Frames der Strahl sichtbar bleibt. */
+export const LASER_FRAMES = 6;
+/** Wartezeit zwischen zwei Schüssen (Frames, Dauerfeuer bei gehaltener Taste). */
+export const LASER_COOLDOWN = 14;
+/** Höhe des Strahls relativ zur Oberkante der Kollisionsbox (Pixel, Helmhöhe). */
+export const LASER_Y_OFFSET = 2;
+
+// ---------------------------------------------------------------------------
+// Dynamit
+// ---------------------------------------------------------------------------
+
+/** Dynamit-Stäbe zu Beginn eines Levels. */
+export const DYNAMITE_START = 6;
+/** Zündschnur: Frames bis zur Explosion (90 = 1,5 s). */
+export const DYNAMITE_FUSE_FRAMES = 90;
+/** Dauer der sichtbaren Explosion (Frames). */
+export const EXPLOSION_FRAMES = 24;
+/** Sprengradius in Kacheln; zerstört Lehm und verletzt die Figur. */
+export const EXPLOSION_RADIUS_TILES = 3;
+
+// ---------------------------------------------------------------------------
 // Farben (Atari-ähnliche, kräftige Palette)
 // ---------------------------------------------------------------------------
 
@@ -81,6 +124,18 @@ export const COLORS = {
   /** Wasser. */
   water: '#2a5fd8',
   waterLight: '#7fb0ff',
+  /** Laser-Strahl (wechselt zwischen beiden Farben). */
+  laser: '#ff3030',
+  laserLight: '#ffffff',
+  /** Explosion (wechselnde Flackerfarben). */
+  boom1: '#ffe030',
+  boom2: '#ff7a10',
+  boom3: '#ffffff',
+  /** HUD. */
+  hudBg: '#000000',
+  hudLine: '#606060',
+  energy: '#ffd400',
+  energyLow: '#ff3030',
   /** Debug-Text. */
   debug: '#00ff66',
   /** Normaler Text. */

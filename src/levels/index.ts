@@ -91,6 +91,12 @@ export class Level {
     return this.tiles[r * this.cols + c] as TileId;
   }
 
+  /** Ändert eine Kachel (z. B. gesprengter Lehm wird Leer). */
+  setTile(c: number, r: number, t: TileId): void {
+    if (c < 0 || r < 0 || c >= this.cols || r >= this.rows) return;
+    this.tiles[r * this.cols + c] = t;
+  }
+
   /** Ist die Kachel an Spalte/Zeile fest? */
   solidAt(c: number, r: number): boolean {
     return isSolid(this.tileAt(c, r));
