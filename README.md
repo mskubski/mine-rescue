@@ -3,7 +3,8 @@
 Eigenständiger Browser-Nachbau im Stil klassischer Heli-Rucksack-Spiele (inspiriert von H.E.R.O. auf dem Atari 2600).
 Alle Grafiken entstehen per Code, es werden keine Original-ROMs oder -Grafiken verwendet.
 
-**Stand:** Meilenstein 6 von 7 (Sound, Touch-Steuerung, Gamepad, PWA/offlinefähig).
+**Stand:** Meilenstein 7 von 7 (komplett, Deployment per GitHub Pages).
+**Online spielen:** https://mskubski.github.io/mine-rescue/
 Siehe [CHANGELOG.md](CHANGELOG.md).
 
 ## Start
@@ -37,6 +38,10 @@ Bergmann am Ende jedes Levels berühren = gerettet. Bonus: 1000 + 10 pro Energie
 **Touch:** Auf Touch-Geräten erscheinen automatisch Bildschirm-Buttons (Steuerkreuz links, Laser/Dyn rechts, Pause und Ton oben). Ein Tipp auf den Laser-Knopf oder das Spielfeld startet/schaltet weiter. Dort wird das Bild in 0,25er-Schritten skaliert (am PC ganzzahlig).
 
 **Gamepad** (Standard-Mapping): Stick/Steuerkreuz = bewegen, A = Laser, B/X = Dynamit, Start = Pause/Weiter, Select = Ton.
+
+## Deployment (GitHub Pages)
+
+`.github/workflows/deploy.yml` baut bei jedem Push auf `main` (`npm ci` + `npm run build`) und veröffentlicht `dist/` auf GitHub Pages. Einmalig nötig: Repo-Einstellungen → Pages → Source = „GitHub Actions“. Da `vite.config.ts` `base: './'` nutzt, funktioniert das Spiel unter jedem Unterpfad ohne weitere Anpassung. Den Fortschritt sieht man im Reiter „Actions“.
 
 ## Installieren / Offline (PWA)
 

@@ -4,6 +4,11 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unveröffentlicht]
 
+## [1.0.0] – Meilenstein 7
+### Hinzugefügt
+- GitHub-Actions-Workflow (`.github/workflows/deploy.yml`): Build und Deployment auf GitHub Pages bei Push auf `main`
+- Online-Version: https://mskubski.github.io/mine-rescue/
+
 ## [0.6.0] – Meilenstein 6
 ### Hinzugefügt
 - Sound per WebAudio (Laser, Dynamit, Explosion, Treffer, Tod, Jingles, Rucksack-Brummen), Mute mit Taste M (gespeichert) und „MUTE“-Anzeige

@@ -3,6 +3,9 @@
 Browser-Spiel im Stil von H.E.R.O. (Atari 2600) als eigenständiger Nachbau. UI-Name ist **"Mine Rescue"**, nie "H.E.R.O.".
 Besitzer: GitHub `mskubski`. Vor dem ersten Push nach dem Repo-Namen fragen.
 
+## Repository
+- GitHub: `mskubski/mine-rescue` (öffentlich), Deployment per Actions auf Pages bei Push auf `main`
+
 ## Befehle
 - `npm run dev` – Dev-Server, `npm run build` – Typecheck + Build, `npm run typecheck`
 
