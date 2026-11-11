@@ -11,6 +11,7 @@
 
 import {
   COLORS,
+  ENEMY_ANIM_FRAMES,
   ENERGY_LOW_FRACTION,
   ENERGY_MAX,
   HUD_H,
@@ -26,13 +27,17 @@ import {
   TILE,
 } from './config';
 import type { Dynamite } from './entities/dynamite';
+import { Spider, type Enemy } from './entities/enemies';
 import type { Laser } from './entities/laser';
 import type { Player } from './entities/player';
 import type { Level } from './levels';
 import { Tile } from './levels/tiles';
 import {
+  BAT_DEFS,
   CLAY_DEF,
   DYNAMITE_DEF,
+  MOTH_DEFS,
+  SPIDER_DEFS,
   LAVA_DEF,
   PLAYER_DEF,
   ROCK_DEF,
@@ -55,6 +60,11 @@ export class Renderer {
   // Vorgerenderte Sprites
   private playerSprite = makeSprite(PLAYER_DEF);
   private dynamiteSprite = makeSprite(DYNAMITE_DEF);
+  private enemySprites: Record<string, Sprite[]> = {
+    spinne: SPIDER_DEFS.map(makeSprite),
+    fledermaus: BAT_DEFS.map(makeSprite),
+    motte: MOTH_DEFS.map(makeSprite),
+  };
   private tileSprites: Record<number, Sprite> = {
     [Tile.Fels]: makeSprite(ROCK_DEF),
     [Tile.Lehm]: makeSprite(CLAY_DEF),
@@ -99,7 +109,10 @@ export class Renderer {
       for (let c = 0; c < ROOM_TILES_W; c++) {
         const t = level.tileAt(c0 + c, r0 + r);
         if (t === Tile.Leer) continue;
-        ctx.drawImage(this.tileSprites[t].normal, c * TILE, r * TILE);
+        // Lava/Wasser "flimmern": Sprite wechselt je Kachel zwischen normal und gespiegelt.
+        const shimmer = (t === Tile.Lava || t === Tile.Wasser) && (Math.floor(this.tick / 20) + c + r) % 2 === 1;
+        const spr = this.tileSprites[t];
+        ctx.drawImage(shimmer ? spr.flipped : spr.normal, c * TILE, r * TILE);
       }
     }
   }
@@ -109,6 +122,22 @@ export class Renderer {
     const sx = Math.round(player.x - this.camX - (PLAYER_SPRITE_W - PLAYER_W) / 2);
     const sy = Math.round(player.y - this.camY - (PLAYER_SPRITE_H - PLAYER_H));
     this.ctx.drawImage(player.facing === 1 ? this.playerSprite.normal : this.playerSprite.flipped, sx, sy);
+  }
+
+  /** Gegner (Spinne mit Faden), zweibildrige Animation. */
+  drawEnemy(e: Enemy): void {
+    if (!e.alive) return;
+    const ctx = this.ctx;
+    const frames = this.enemySprites[e.kind];
+    const frame = Math.floor(e.age / ENEMY_ANIM_FRAMES) % frames.length;
+    const sx = Math.round(e.x - this.camX);
+    const sy = Math.round(e.y - this.camY);
+    if (e instanceof Spider) {
+      // Faden von der Decke bis zur Spinne
+      ctx.fillStyle = COLORS.thread;
+      ctx.fillRect(sx + 3, Math.round(e.anchorY - this.camY), 1, sy - Math.round(e.anchorY - this.camY) + 2);
+    }
+    ctx.drawImage(frames[frame].normal, sx, sy);
   }
 
   /** Laser-Strahl (flackert zwischen zwei Farben). */

@@ -18,6 +18,7 @@ Besitzer: GitHub `mskubski`. Vor dem ersten Push nach dem Repo-Namen fragen.
 
 ## Entscheidungen
 - Screen-Flip wie Original: Kamera zeigt den Raum (20x22 Kacheln = 160x176 px, darunter 16 px HUD), in dem die Figurenmitte liegt; Welt ist ein globales Tile-Raster
+- Gegner (8x8) agieren nur im Raum der Figur; Tod ist bis M5 ein Platzhalter (Respawn + Gegner neu)
 - Kachelgröße 8x8; Kollisionsbox Figur 6x14, Sprite 8x16
 
 ## Arbeitsweise

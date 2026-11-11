@@ -19,6 +19,11 @@ export interface Rect {
   h: number;
 }
 
+/** Überlappen sich zwei Rechtecke? */
+export function rectsOverlap(a: Rect, b: Rect): boolean {
+  return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
 export class Laser {
   /** Verbleibende Sichtbarkeit in Frames (0 = aus). */
   ttl = 0;

@@ -22,9 +22,12 @@ import {
   THRUST,
   TILE,
   WALK_SPEED,
+  ENERGY_WATER_COST,
+  WATER_SPEED_FACTOR,
 } from '../config';
 import type { Input } from '../input';
 import type { Level } from '../levels';
+import { Tile, type TileId } from '../levels/tiles';
 import type { Rect } from './laser';
 
 export class Player {
@@ -93,9 +96,35 @@ export class Player {
       this.vy = Math.min(this.vy + GRAVITY + (down ? DIVE_ACCEL : 0), MAX_FALL_SPEED);
     }
 
+    // --- Wasser: bremst alle Bewegungen und kostet zusätzlich Energie ---
+    let moveVx = this.vx;
+    let moveVy = this.vy;
+    if (this.inWater(level)) {
+      moveVx *= WATER_SPEED_FACTOR;
+      moveVy *= WATER_SPEED_FACTOR;
+      this.energy = Math.max(0, this.energy - ENERGY_WATER_COST);
+    }
+
     // --- Bewegung mit Kollision, Achse für Achse ---
-    this.moveX(level, this.vx);
-    this.moveY(level, this.vy);
+    this.moveX(level, moveVx);
+    this.moveY(level, moveVy);
+  }
+
+  /** Steht die Figurmitte im Wasser? */
+  inWater(level: Level): boolean {
+    return level.tileAt(Math.floor(this.centerX / TILE), Math.floor(this.centerY / TILE)) === Tile.Wasser;
+  }
+
+  /** Berührt die Kollisionsbox eine Kachel dieses Typs (z. B. Lava)? */
+  touches(level: Level, tile: TileId): boolean {
+    const c0 = Math.floor(this.x / TILE);
+    const c1 = Math.floor((this.x + PLAYER_W - 0.001) / TILE);
+    const r0 = Math.floor(this.y / TILE);
+    const r1 = Math.floor((this.y + PLAYER_H - 0.001) / TILE);
+    for (let r = r0; r <= r1; r++) {
+      for (let c = c0; c <= c1; c++) if (level.tileAt(c, r) === tile) return true;
+    }
+    return false;
   }
 
   /** Bewegt in X und stoppt an festen Kacheln. */

@@ -14,12 +14,17 @@ Ein Level ist ein `LevelDef` (`name` + `map`) in `src/levels/levelN.ts`. `map` i
 | `.`     | leer (Höhle)                                |
 | `#`     | Fels (fest, nicht sprengbar)                |
 | `L`     | Lehm (fest, mit Dynamit sprengbar; Sprengradius `EXPLOSION_RADIUS_TILES` in config.ts)   |
-| `~`     | Lava (tödlich, ab M4)                       |
-| `W`     | Wasser (ab M4)                              |
+| `~`     | Lava (tödlich)                              |
+| `W`     | Wasser (bremst, kostet Energie)             |
+| `S`     | Spinne – muss direkt unter fester Kachel (Decke) stehen; seilt sich bis zum Boden ab (max. `SPIDER_MAX_DROP_TILES`) |
+| `B`     | Fledermaus – patrouilliert waagerecht, dreht an Wänden um |
+| `M`     | Motte – verfolgt die Figur, sobald diese im selben Raum ist |
 | `P`     | Startpunkt – genau einmal pro Level         |
 | `R`     | verschütteter Bergmann – genau einmal       |
 
-`P`/`R` sind Marker: darunter wird die Kachel als leer behandelt. Die Figur steht mittig auf der unteren Kante der Kachel.
+Gegner bewegen sich nur, solange die Figur im selben Raum ist.
+
+`P`/`R`/`S`/`B`/`M` sind Marker: darunter wird die Kachel als leer behandelt. Die Figur steht mittig auf der unteren Kante der Kachel.
 
 ## Hinweise zum Bauen
 - Gänge mindestens **2 Kacheln (16 px) hoch**, Schächte mindestens **1 Kachel breit** (Figur ist 6 px breit, 14 px hoch).

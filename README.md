@@ -3,7 +3,7 @@
 Eigenständiger Browser-Nachbau im Stil klassischer Heli-Rucksack-Spiele (inspiriert von H.E.R.O. auf dem Atari 2600).
 Alle Grafiken entstehen per Code, es werden keine Original-ROMs oder -Grafiken verwendet.
 
-**Stand:** Meilenstein 3 von 7 (Energie, Laser, Dynamit, Lehmwände sprengen).
+**Stand:** Meilenstein 4 von 7 (Gegner: Spinne, Fledermaus, Motte; Lava tödlich, Wasser bremst).
 Siehe [CHANGELOG.md](CHANGELOG.md).
 
 ## Start
@@ -41,7 +41,7 @@ src/
   input.ts       Tastatur -> Aktionen (Tastenbelegung dort ändern)
   renderer.ts    Canvas, ganzzahlige Skalierung, Zeichnen
   sprites.ts     Pixel-Sprites als Text-Arrays + Paletten
-  entities/      player, laser, dynamite (später Gegner)
+  entities/      player, laser, dynamite, enemies (Spinne, Fledermaus, Motte)
   levels/        tiles.ts (Kachel-Typen), index.ts (Parser), level1.ts (Karte)
   ui/            Pixelfont (später Titel, Game Over)
 docs/LEVEL_FORMAT.md   Anleitung zum Editieren von Leveln
@@ -51,6 +51,7 @@ docs/LEVEL_FORMAT.md   Anleitung zum Editieren von Leveln
 
 - **Spielgefühl** (Lauftempo, Schwerkraft, Schub, Energieverbrauch, Laser, Dynamit-Zündschnur/Radius): `src/config.ts`
 - **Level bauen/ändern**: `src/levels/level1.ts`, Format in `docs/LEVEL_FORMAT.md`; neue Level in `LEVEL_DEFS` (`src/levels/index.ts`) eintragen
+- **Gegner-Verhalten und -Tempo**: `src/entities/enemies.ts` + Konstanten in `src/config.ts`
 - **Grafiken**: `src/sprites.ts`
 - **Tastenbelegung**: `BINDINGS` in `src/input.ts`
 - **Farben**: `COLORS` in `src/config.ts`

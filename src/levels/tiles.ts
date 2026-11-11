@@ -32,6 +32,16 @@ export const TILE_CHARS: Record<string, TileId> = {
   W: Tile.Wasser,
 };
 
+/** Gegner-Arten. */
+export type EnemyKind = 'spinne' | 'fledermaus' | 'motte';
+
+/** Zeichen in der Level-Datei -> Gegner-Art (Marker; darunter ist die Kachel leer). */
+export const ENEMY_CHARS: Record<string, EnemyKind> = {
+  S: 'spinne',
+  B: 'fledermaus',
+  M: 'motte',
+};
+
 /** Blockiert die Kachel Bewegung (Wände, Boden, Decke)? */
 export function isSolid(t: TileId): boolean {
   return t === Tile.Fels || t === Tile.Lehm;

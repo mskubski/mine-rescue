@@ -10,11 +10,13 @@
  */
 
 import { Dynamite } from './entities/dynamite';
-import { Laser } from './entities/laser';
+import { createEnemy, type Enemy } from './entities/enemies';
+import { Laser, rectsOverlap } from './entities/laser';
 import { Player } from './entities/player';
 import { ENERGY_LASER_COST, ENERGY_MAX, PLAYER_H, ROOM_PX_H, SCREEN_W } from './config';
 import { Input } from './input';
 import { Level, LEVEL_DEFS } from './levels';
+import { Tile } from './levels/tiles';
 import { Renderer } from './renderer';
 
 export class Game {
@@ -25,6 +27,8 @@ export class Game {
   private laser = new Laser();
   /** Aktiver Dynamit-Stab (es liegt immer höchstens einer). */
   private dynamite: Dynamite | null = null;
+  /** Alle Gegner des Levels. */
+  private enemies: Enemy[] = [];
   private paused = false;
   private debug = false;
 
@@ -32,6 +36,12 @@ export class Game {
     this.renderer = new Renderer(canvas);
     this.level = new Level(LEVEL_DEFS[0]);
     this.player.placeAtFeet(this.level.start.x, this.level.start.y);
+    this.spawnEnemies();
+  }
+
+  /** Erzeugt alle Gegner neu aus den Markern des Levels. */
+  private spawnEnemies(): void {
+    this.enemies = this.level.enemySpawns.map((s) => createEnemy(s, this.level));
   }
 
   /** Raum-Spalte der Kamera (aus der Figurenmitte, auf Levelgrenzen begrenzt). */
@@ -52,6 +62,9 @@ export class Game {
     if (!this.paused) {
       this.player.update(this.input, this.level);
       this.updateWeapons();
+      this.updateEnemies();
+      // Lava ist tödlich
+      if (this.player.touches(this.level, Tile.Lava)) this.killPlayer();
     }
     this.input.endFrame();
   }
@@ -79,6 +92,22 @@ export class Game {
     }
   }
 
+  /** Gegner im aktuellen Raum bewegen und Treffer auswerten (Laser, Explosion, Berührung). */
+  private updateEnemies(): void {
+    const rx = this.roomX;
+    const ry = this.roomY;
+    for (const e of this.enemies) {
+      if (!e.alive || e.roomX !== rx || e.roomY !== ry) continue;
+      e.update(this.level, this.player);
+      if (this.laser.active && rectsOverlap(this.laser.rect(), e.box)) e.alive = false;
+      if (this.dynamite?.hits(e.box)) e.alive = false;
+      if (e.alive && rectsOverlap(this.player.box, e.box)) {
+        this.killPlayer();
+        return;
+      }
+    }
+  }
+
   /**
    * Figur stirbt. PLATZHALTER bis Meilenstein 5 (Leben/Game Over):
    * Figur wird am Start neu gesetzt und die Energie aufgefüllt.
@@ -87,6 +116,7 @@ export class Game {
     this.player.placeAtFeet(this.level.start.x, this.level.start.y);
     this.player.energy = ENERGY_MAX;
     this.dynamite = null;
+    this.spawnEnemies();
   }
 
   /** Zeichnet den aktuellen Zustand. */
@@ -95,6 +125,9 @@ export class Game {
     const ry = this.roomY;
     const r = this.renderer;
     r.beginFrame(this.level, rx, ry);
+    for (const e of this.enemies) {
+      if (e.roomX === rx && e.roomY === ry) r.drawEnemy(e);
+    }
     if (this.dynamite) r.drawDynamite(this.dynamite);
     r.drawPlayer(this.player);
     r.drawLaser(this.laser);

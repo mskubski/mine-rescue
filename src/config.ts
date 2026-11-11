@@ -106,6 +106,41 @@ export const EXPLOSION_FRAMES = 24;
 export const EXPLOSION_RADIUS_TILES = 3;
 
 // ---------------------------------------------------------------------------
+// Gefahren: Wasser
+// ---------------------------------------------------------------------------
+
+/** Faktor auf Lauf-/Flug- und Fallgeschwindigkeit im Wasser (0.5 = halb so schnell). */
+export const WATER_SPEED_FACTOR = 0.5;
+/** Zusätzlicher Energieverbrauch pro Frame, solange die Figur im Wasser ist. */
+export const ENERGY_WATER_COST = 0.05;
+
+// ---------------------------------------------------------------------------
+// Gegner
+// ---------------------------------------------------------------------------
+
+/** Kantenlänge eines Gegner-Sprites (Pixel). */
+export const ENEMY_SIZE = 8;
+/** Treffer-Toleranz: Kollisionsbox ist ringsum so viele Pixel kleiner als das Sprite. */
+export const ENEMY_HITBOX_INSET = 1;
+/** Frames pro Animationsbild der Gegner. */
+export const ENEMY_ANIM_FRAMES = 10;
+
+/** Spinne: Tempo (Pixel/Frame) und maximale Abseil-Tiefe in Kacheln. */
+export const SPIDER_SPEED = 0.5;
+export const SPIDER_MAX_DROP_TILES = 6;
+
+/** Fledermaus: Tempo (Pixel/Frame), Auf-und-ab-Amplitude (Pixel) und -Geschwindigkeit (Bogenmaß/Frame). */
+export const BAT_SPEED = 0.7;
+export const BAT_WOBBLE_AMP = 6;
+export const BAT_WOBBLE_SPEED = 0.08;
+
+/** Motte: Tempo (Pixel/Frame), mit dem sie auf die Figur zufliegt (nur im selben Raum). */
+export const MOTH_SPEED = 0.35;
+/** Motte: Zappel-Amplitude (Pixel) und -Geschwindigkeit. */
+export const MOTH_WOBBLE_AMP = 2;
+export const MOTH_WOBBLE_SPEED = 0.15;
+
+// ---------------------------------------------------------------------------
 // Farben (Atari-ähnliche, kräftige Palette)
 // ---------------------------------------------------------------------------
 
@@ -131,6 +166,8 @@ export const COLORS = {
   boom1: '#ffe030',
   boom2: '#ff7a10',
   boom3: '#ffffff',
+  /** Spinnenfaden. */
+  thread: '#c8c8c8',
   /** HUD. */
   hudBg: '#000000',
   hudLine: '#606060',

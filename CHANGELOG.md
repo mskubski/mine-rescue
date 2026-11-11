@@ -4,6 +4,14 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unveröffentlicht]
 
+## [0.4.0] – Meilenstein 4
+### Hinzugefügt
+- Gegner: Spinne (seilt sich an der Decke ab), Fledermaus (patrouilliert waagerecht), Motte (verfolgt die Figur im selben Raum)
+- Gegner werden per Laser oder Explosion getötet, Berührung tötet die Figur
+- Lava ist tödlich; Wasser bremst und kostet zusätzlich Energie
+- Gegner-Marker `S`, `B`, `M` im Level-Format (Spinne muss an einer Decke hängen, sonst Fehlermeldung)
+- Level 1 mit allen Gegnerarten und Lava vor dem Bergmann
+
 ## [0.3.0] – Meilenstein 3
 ### Hinzugefügt
 - Energie (Rucksack-Power): sinkt beim Fliegen und Schießen, bei 0 versagt der Schub

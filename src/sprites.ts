@@ -164,3 +164,46 @@ export const DYNAMITE_DEF: SpriteDef = {
     'RRRR',
   ],
 };
+
+// ---------------------------------------------------------------------------
+// Gegner (8x8, je zwei Animationsbilder)
+// ---------------------------------------------------------------------------
+
+/** Spinne: violetter Körper, weiße Augen, Beine wechseln. */
+const SPIDER_PAL = { P: '#a040e0', W: '#ffffff' };
+export const SPIDER_DEFS: SpriteDef[] = [
+  {
+    palette: SPIDER_PAL,
+    rows: ['.P....P.', 'P.PPPP.P', '..PWWP..', '.PPPPPP.', 'P.PPPP.P', '.P....P.', 'P......P', '........'],
+  },
+  {
+    palette: SPIDER_PAL,
+    rows: ['P......P', '.P.PP.P.', '..PWWP..', '.PPPPPP.', '.PPPPPP.', 'P.P..P.P', '.P....P.', '........'],
+  },
+];
+
+/** Fledermaus: dunkle Flügel schlagen auf und ab, rote Augen. */
+const BAT_PAL = { B: '#b0b0d0', R: '#ff3030' };
+export const BAT_DEFS: SpriteDef[] = [
+  {
+    palette: BAT_PAL,
+    rows: ['B......B', 'BB....BB', 'BBB..BBB', '.BBBBBB.', '..BRRB..', '...BB...', '........', '........'],
+  },
+  {
+    palette: BAT_PAL,
+    rows: ['........', '........', '.B....B.', 'BBB..BBB', 'BBBBBBBB', '..BRRB..', '...BB...', '........'],
+  },
+];
+
+/** Motte: helle Flügel, gelber Körper. */
+const MOTH_PAL = { M: '#f0e0a0', T: '#d09020' };
+export const MOTH_DEFS: SpriteDef[] = [
+  {
+    palette: MOTH_PAL,
+    rows: ['........', '.MM..MM.', 'MMMMMMMM', 'MMMTTMMM', '.MMTTMM.', '..MTTM..', '...TT...', '........'],
+  },
+  {
+    palette: MOTH_PAL,
+    rows: ['........', '........', '........', 'MMMTTMMM', 'MMMTTMMM', '.MMTTMM.', '..MTTM..', '...TT...'],
+  },
+];
