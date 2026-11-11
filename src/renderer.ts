@@ -36,6 +36,7 @@ import {
   BAT_DEFS,
   CLAY_DEF,
   DYNAMITE_DEF,
+  MINER_DEFS,
   MOTH_DEFS,
   SPIDER_DEFS,
   LAVA_DEF,
@@ -46,6 +47,7 @@ import {
   type Sprite,
 } from './sprites';
 import { drawText } from './ui/font';
+import { formatScore } from './ui/screens';
 
 export class Renderer {
   readonly canvas: HTMLCanvasElement;
@@ -60,6 +62,7 @@ export class Renderer {
   // Vorgerenderte Sprites
   private playerSprite = makeSprite(PLAYER_DEF);
   private dynamiteSprite = makeSprite(DYNAMITE_DEF);
+  private minerSprites = MINER_DEFS.map(makeSprite);
   private enemySprites: Record<string, Sprite[]> = {
     spinne: SPIDER_DEFS.map(makeSprite),
     fledermaus: BAT_DEFS.map(makeSprite),
@@ -172,8 +175,32 @@ export class Renderer {
     ctx.fillRect(sx + 2, sy - 1, 1, 1);
   }
 
-  /** HUD-Streifen am unteren Rand: Energie-Balken und Dynamit-Vorrat. */
-  drawHud(player: Player): void {
+  /** Löscht den ganzen Bildschirm (für Titel- und Endbildschirme). */
+  clear(): void {
+    this.ctx.fillStyle = COLORS.background;
+    this.ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
+    this.tick++;
+  }
+
+  /** Verschütteter Bergmann (winkt); Position = Mitte-unten in Welt-Pixeln. */
+  drawMiner(pos: { x: number; y: number }): void {
+    const frame = Math.floor(this.tick / 15) % 2;
+    this.ctx.drawImage(this.minerSprites[frame].normal, Math.round(pos.x - this.camX - 4), Math.round(pos.y - this.camY - 16));
+  }
+
+  /** Grafik für den Titelbildschirm: Figur und Bergmann auf einem Felsstreifen. */
+  drawTitleArt(): void {
+    const ctx = this.ctx;
+    for (let c = 0; c < ROOM_TILES_W; c++) {
+      ctx.drawImage(this.tileSprites[Tile.Fels].normal, c * TILE, 104);
+      ctx.drawImage(this.tileSprites[Tile.Fels].normal, c * TILE, 112);
+    }
+    ctx.drawImage(this.playerSprite.normal, 40, 88);
+    ctx.drawImage(this.minerSprites[Math.floor(this.tick / 15) % 2].normal, 112, 88);
+  }
+
+  /** HUD-Streifen am unteren Rand: Punkte, Level, Energie, Dynamit, Leben. */
+  drawHud(player: Player, score: number, lives: number, levelNumber: number): void {
     const ctx = this.ctx;
     const y0 = ROOM_PX_H;
     ctx.fillStyle = COLORS.hudBg;
@@ -181,22 +208,27 @@ export class Renderer {
     ctx.fillStyle = COLORS.hudLine;
     ctx.fillRect(0, y0, SCREEN_W, 1);
 
-    // Energie-Balken (Rahmen + Füllung), blinkt rot bei niedriger Energie
+    // Obere Zeile: Punkte links, Level rechts
+    drawText(ctx, `SCORE ${formatScore(score)}`, 4, y0 + 2, COLORS.text);
+    drawText(ctx, `LEVEL ${levelNumber}`, 112, y0 + 2, COLORS.text);
+
+    // Untere Zeile: Energie-Balken (Rahmen + Füllung), blinkt rot bei niedriger Energie
     const frac = player.energy / ENERGY_MAX;
     const bx = 4;
-    const by = y0 + 5;
-    const bw = 100;
+    const by = y0 + 10;
+    const bw = 64;
     ctx.fillStyle = COLORS.hudLine;
-    ctx.fillRect(bx - 1, by - 1, bw + 2, 8);
+    ctx.fillRect(bx - 1, by - 1, bw + 2, 7);
     ctx.fillStyle = COLORS.hudBg;
-    ctx.fillRect(bx, by, bw, 6);
+    ctx.fillRect(bx, by, bw, 5);
     const low = frac < ENERGY_LOW_FRACTION;
     ctx.fillStyle = low && Math.floor(this.tick / 8) % 2 === 0 ? COLORS.energyLow : COLORS.energy;
-    ctx.fillRect(bx, by, Math.round(bw * frac), 6);
+    ctx.fillRect(bx, by, Math.round(bw * frac), 5);
 
-    // Dynamit-Symbol + Anzahl
-    ctx.drawImage(this.dynamiteSprite.normal, 112, y0 + 5);
-    drawText(ctx, `X${player.dynamite}`, 120, y0 + 5, COLORS.text);
+    // Dynamit-Symbol + Anzahl, Leben
+    ctx.drawImage(this.dynamiteSprite.normal, 76, y0 + 9);
+    drawText(ctx, `X${player.dynamite}`, 83, y0 + 10, COLORS.text);
+    drawText(ctx, `LIVES ${lives}`, 112, y0 + 10, COLORS.text);
   }
 
   /** Debug-Einblendung: Raum und Pixelposition. */

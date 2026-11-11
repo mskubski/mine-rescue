@@ -20,7 +20,8 @@ export type Action =
   | 'dynamit'
   | 'pause'
   | 'mute'
-  | 'debug';
+  | 'debug'
+  | 'start';
 
 /** Tastenbelegung: Aktion -> Liste von KeyboardEvent.code-Werten. */
 const BINDINGS: Record<Action, string[]> = {
@@ -33,6 +34,7 @@ const BINDINGS: Record<Action, string[]> = {
   pause: ['KeyP'],
   mute: ['KeyM'],
   debug: ['F3'],
+  start: ['Enter', 'Space'],
 };
 
 /** Verwaltet den Zustand aller Eingabegeräte. */

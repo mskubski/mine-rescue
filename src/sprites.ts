@@ -207,3 +207,20 @@ export const MOTH_DEFS: SpriteDef[] = [
     rows: ['........', '........', '........', 'MMMTTMMM', 'MMMTTMMM', '.MMTTMM.', '..MTTM..', '...TT...'],
   },
 ];
+
+// ---------------------------------------------------------------------------
+// Verschütteter Bergmann (8x16, winkt: zwei Bilder)
+// ---------------------------------------------------------------------------
+
+const MINER_PAL = { O: '#ff8000', F: '#f0b888', G: '#40a040', K: '#6b3a12' };
+const MINER_LEGS = ['..G..G..', '..G..G..', '..G..G..', '..G..G..', '..G..G..', '..KK.KK.', '..KK.KK.'];
+export const MINER_DEFS: SpriteDef[] = [
+  {
+    palette: MINER_PAL,
+    rows: ['..OOOO..', '.OOOOOO.', '.OFFFFO.', '..FFFF..', 'F.GGGG.F', 'F.GGGG.F', '.FGGGGF.', '..GGGG..', '..GGGG..', ...MINER_LEGS.slice(0, 7)],
+  },
+  {
+    palette: MINER_PAL,
+    rows: ['..OOOO..', '.OOOOOO.', '.OFFFFO.', '..FFFF..', '.FGGGGF.', '.FGGGGF.', '.FGGGGF.', '..GGGG..', '..GGGG..', ...MINER_LEGS.slice(0, 7)],
+  },
+];

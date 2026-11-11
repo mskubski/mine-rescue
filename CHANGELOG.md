@@ -4,6 +4,16 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unveröffentlicht]
 
+## [0.5.0] – Meilenstein 5
+### Hinzugefügt
+- Rettung des Bergmanns beendet das Level; Bonus für Restenergie und Restdynamit
+- Punktestand, 3 Leben, Extraleben alle 20000 Punkte, Highscore (localStorage)
+- Titel-, Bonus-, Game-Over- und Sieg-Bildschirm; Pixelfont jetzt A–Z
+- Level 2 ("Tiefe Gänge", 4x2 Räume) und Level 3 ("Der Schacht", 3x3 Räume mit Lehm-Boden im Schacht)
+- HUD mit Punkten, Level, Energie, Dynamit, Leben
+### Geändert
+- Tod kostet ein Leben und startet das Level neu (vorher Platzhalter)
+
 ## [0.4.0] – Meilenstein 4
 ### Hinzugefügt
 - Gegner: Spinne (seilt sich an der Decke ab), Fledermaus (patrouilliert waagerecht), Motte (verfolgt die Figur im selben Raum)

@@ -46,6 +46,14 @@ export class Player {
   /** Schiebt der Rucksack gerade (für Animation/Sound später)? */
   thrusting = false;
 
+  /** Setzt Energie und Dynamit auf Levelbeginn zurück und platziert die Figur am Start. */
+  resetForLevel(startX: number, startY: number): void {
+    this.placeAtFeet(startX, startY);
+    this.energy = ENERGY_MAX;
+    this.dynamite = DYNAMITE_START;
+    this.facing = 1;
+  }
+
   /** Setzt die Figur mit den Füßen mittig auf (fx, fy) = Mitte-unten. */
   placeAtFeet(fx: number, fy: number): void {
     this.x = fx - PLAYER_W / 2;

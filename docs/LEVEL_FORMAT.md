@@ -5,7 +5,7 @@ Ein Level ist ein `LevelDef` (`name` + `map`) in `src/levels/levelN.ts`. `map` i
 ## Größe
 - Die Welt besteht aus **Räumen zu 20x22 Kacheln** (Kachel = 8x8 Pixel, Raum = 160x176 Pixel; darunter liegt der 16 px hohe HUD-Streifen).
 - Breite jeder Zeile = Vielfaches von **20**, Zeilenzahl = Vielfaches von **22**.
-- Level 1: 3x2 Räume = 60 Zeichen x 44 Zeilen.
+- Level 1: 3x2 Räume (60x44), Level 2: 4x2 (80x44), Level 3: 3x3 (60x66).
 - Die Kamera springt beim Verlassen eines Raumes zum Nachbarraum (Screen-Flip). Der Rand der Karte zählt als Fels.
 
 ## Zeichen

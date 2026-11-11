@@ -106,6 +106,29 @@ export const EXPLOSION_FRAMES = 24;
 export const EXPLOSION_RADIUS_TILES = 3;
 
 // ---------------------------------------------------------------------------
+// Spielablauf: Leben, Punkte, Bonus
+// ---------------------------------------------------------------------------
+
+/** Leben zu Spielbeginn. */
+export const LIVES_START = 3;
+/** Dauer der Todesanimation, bevor es weitergeht (Frames). */
+export const DEATH_FRAMES = 90;
+/** Punkte für einen getöteten Gegner. */
+export const POINTS_ENEMY = 50;
+/** Punkte für die Rettung des Bergmanns. */
+export const RESCUE_BONUS = 1000;
+/** Bonus pro verbleibender Energie-Einheit (ganzzahlig gerundet). */
+export const ENERGY_BONUS_PER_UNIT = 10;
+/** Bonus pro nicht verbrauchtem Dynamit-Stab. */
+export const DYNAMITE_BONUS_EACH = 50;
+/** Alle so viele Punkte gibt es ein Extraleben. */
+export const EXTRA_LIFE_EVERY = 20000;
+/** Mindestdauer der Bonus-/Game-Over-Anzeige, bevor eine Taste weiterschaltet (Frames). */
+export const SCREEN_MIN_FRAMES = 90;
+/** Browser-Speicherschlüssel für den Highscore. */
+export const HIGHSCORE_KEY = 'mine-rescue-highscore';
+
+// ---------------------------------------------------------------------------
 // Gefahren: Wasser
 // ---------------------------------------------------------------------------
 
@@ -166,6 +189,10 @@ export const COLORS = {
   boom1: '#ffe030',
   boom2: '#ff7a10',
   boom3: '#ffffff',
+  /** Titel/Bildschirme. */
+  title: '#ffd400',
+  titleShadow: '#c04000',
+  highlight: '#40e0ff',
   /** Spinnenfaden. */
   thread: '#c8c8c8',
   /** HUD. */

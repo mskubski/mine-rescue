@@ -9,6 +9,8 @@
 import { ROOM_TILES_H, ROOM_TILES_W, TILE } from '../config';
 import { ENEMY_CHARS, Tile, TILE_CHARS, isSolid, type EnemyKind, type TileId } from './tiles';
 import { level1 } from './level1';
+import { level2 } from './level2';
+import { level3 } from './level3';
 
 /** Rohdaten eines Levels, wie sie in levelN.ts stehen. */
 export interface LevelDef {
@@ -135,4 +137,4 @@ export class Level {
 }
 
 /** Alle Level in Spielreihenfolge. Neue Level hier eintragen. */
-export const LEVEL_DEFS: LevelDef[] = [level1];
+export const LEVEL_DEFS: LevelDef[] = [level1, level2, level3];
