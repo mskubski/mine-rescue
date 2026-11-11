@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Mine Rescue</title>
+    <style>
+      /* Seite komplett schwarz, Spielfläche zentriert */
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #000;
+        overflow: hidden;
+      }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      /* Interne Auflösung 160x192; die tatsächliche CSS-Größe setzt renderer.ts
+         als ganzzahliges Vielfaches. pixelated = harte Pixelkanten. */
+      #screen {
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+        background: #000;
+        touch-action: none;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="screen" width="160" height="192"></canvas>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
